@@ -1,0 +1,47 @@
+{
+    "produtos": [
+      {
+        "id": 1,
+        "nome": "PC Gamer",
+        "categoria": "Informática",
+        "preco": 3500.00,
+        "estoque": 12
+        
+      },
+      {
+        "id": 2,
+        "nome": "Mouse Gamer",
+        "categoria": "Periféricos",
+        "preco": 120.00,
+        "estoque": 50
+      },
+      {
+        "id": 3,
+        "nome": "Cadeira Ergonômica",
+        "categoria": "Móveis",
+        "preco": 899.90,
+        "estoque": 8
+      }
+    ],
+    "vendas": [
+      {
+        "id": 1,
+        "produtoId": 1,
+        "quantidade": 1,
+        "data": "2025-11-01"
+      },
+      {
+        "id": 2,
+        "produtoId": 2,
+        "quantidade": 3,
+        "data": "2025-11-05"
+      },
+      {
+        "id": 3,
+        "produtoId": 1,
+        "quantidade": 2,
+        "data": "2025-11-10"
+      }
+    ]
+  }
+  

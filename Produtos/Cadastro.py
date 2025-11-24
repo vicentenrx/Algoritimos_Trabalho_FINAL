@@ -25,22 +25,24 @@ def criar_produto():
             "preco": preco,
             "estoque": estoque
         })
+
         if response.status_code == 201:
-            produto = response.json
+            produto = response.json()
             print(f"Produto criado com sucesso! ID: {produto['id']}")
         else:
-            print("Erro ao criar produto:")
-    except:
-        print("Erro..")
+            print("Erro ao criar produto!")
 
-        input("Pressione ENTER para continuar..............")
+    except Exception as e:
+        print(f"Erro: {e}")
+
+    input("Pressione ENTER para continuar...")
 
 
 def listar_produtos():
     titulo("Listagem de Produtos")
 
     try:
-        response = requests.get(f"{BASE_URL}")
+        response = requests.get(f"{BASE_URL}/produtos")
         if response.status_code !=200:
             console.print("Erro ao obter lista de produtos", style="bold red")
             return
@@ -60,25 +62,19 @@ def listar_produtos():
 
             table.add_row(
                 str(produto.get("id")),
-                produto.get("nome", ""),
-                produto.get("categoria", ""),
+                str(produto.get("nome", "")),
+                str(produto.get("categoria", "")),
                 f"R$ {preco_f}",
-                produto.get("estoque", "")
+                str(produto.get("estoque", ""))
             )
 
         console.print(table)
 
     except Exception as e:
         console.print(f"Erro de conexão: {e}",
-        style="bold red") # Trocar as cores
+        style="bold red")
 
     input("Pressione ENTER para continuar..............")
-
-
-
-# CONTINUAR DAQUI!!!! (NÃO TESTEI O RESTO) 
-
-
 
 def buscar_produto_por_id():
     titulo("Buscar Produto por ID")

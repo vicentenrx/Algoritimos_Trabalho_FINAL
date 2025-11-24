@@ -4,6 +4,7 @@ console = Console()
 
 def titulo(texto):
     console.clear()
-    console.rule("[dark_magenta]LOJAS ESTRADA")
-    console.rule(texto, style="deep_pink3")
+    console.rule("[blue]LOJAS ESTRADA")
+    console.rule(texto, style="blue")
     console.rule()
+

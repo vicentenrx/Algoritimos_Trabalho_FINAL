@@ -1,55 +1,48 @@
-import requests
-import matplotlib.pyplot as plt
-from collections import Counter
 from rich.console import Console
-from funcoes_gerais.gerais import titulo
+from rich.table import Table
+from rich.progress import Progress, BarColumn, TextColumn
+import requests
+from collections import Counter
+from funcoes.gerais import titulo
 
 console = Console()
-
 BASE_URL = "http://localhost:3000"
-
-# ============================
-#   GRÁFICO — VENDAS
-# ============================
 
 def grafico_vendas_por_produto():
     titulo("Gráfico — Vendas por Produto")
 
     try:
-        resp_vendas = requests.get(f"{BASE_URL}/vendas")
+        resp = requests.get(f"{BASE_URL}/vendas")
 
-        if resp_vendas.status_code != 200:
+        if resp.status_code != 200:
             console.print("[red]Erro ao buscar vendas![/red]")
             input("ENTER para continuar...")
             return
 
-        vendas = resp_vendas.json()
+        vendas = resp.json()
 
         if not vendas:
             console.print("[yellow]Nenhuma venda encontrada![/yellow]")
             input("ENTER para continuar...")
             return
 
-        nomes_produtos = []
+        nomes = []
 
         for v in vendas:
-            resp_prod = requests.get(f"{BASE_URL}/produtos/{v['produtoId']}")
-            if resp_prod.status_code == 200:
-                prod = resp_prod.json()
-                nomes_produtos.append(prod["nome"])
+            prod = requests.get(f"{BASE_URL}/produtos/{v['produtoId']}").json()
+            nomes.append(prod["nome"])
 
-        contagem = Counter(nomes_produtos)
+        contagem = Counter(nomes)
 
-        plt.figure(figsize=(9, 6))
-        plt.bar(contagem.keys(), contagem.values())
-        plt.title("Quantidade de Vendas por Produto")
-        plt.xticks(rotation=45, ha='right')
-        plt.xlabel("Produto")
-        plt.ylabel("Vendas")
-        plt.tight_layout()
-        plt.show()
+        console.print("[bold deep_pink3]Quantidade de Vendas por Produto[/bold deep_pink3]\n")
+
+        for nome, qtd in contagem.items():
+            console.print(
+                f"[cyan]{nome:<20}[/cyan] "
+                + "[magenta]" + ("█" * qtd * 2) + f"[/magenta] {qtd}"
+            )
 
     except Exception as e:
         console.print(f"[red]Erro ao gerar gráfico: {e}[/red]")
 
-    input("ENTER para continuar...")
+    input("\nENTER para continuar...")

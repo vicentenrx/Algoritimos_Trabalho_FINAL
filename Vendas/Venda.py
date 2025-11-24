@@ -12,36 +12,72 @@ BASE_URL = "http://localhost:3000"
 def criar_venda():
     titulo("Registrar Venda")
 
-    produto_id = input("ID do produto: ")
+    produto_id = input("ID do produto: ")  
     quantidade = input("Quantidade: ")
 
     try:
-        # Verifica se o produto existe
+        if not quantidade.isdigit():
+            console.print("[red]Quantidade deve ser número![/red]")
+            input("ENTER...")
+            return
+
+        quantidade = int(quantidade)
+
         resp_prod = requests.get(f"{BASE_URL}/produtos/{produto_id}")
 
         if resp_prod.status_code != 200:
             console.print("[red]Produto não encontrado![/red]")
-            input("ENTER para continuar...")
+            input("ENTER...")
             return
         
         produto = resp_prod.json()
 
-        nova_venda = {
-            "produtoId": int(produto_id),
-            "quantidade": int(quantidade)
+        estoque_atual = int(produto.get("estoque", 0))
+
+        if quantidade > estoque_atual:
+            console.print(
+                f"[red]Estoque insuficiente! Disponível: {estoque_atual}[/red]"
+            )
+            input("ENTER...")
+            return
+
+        novo_estoque = estoque_atual - quantidade
+
+        produto_atualizado = {
+            "nome": produto["nome"],
+            "categoria": produto["categoria"],
+            "preco": produto["preco"],
+            "estoque": novo_estoque
         }
 
-        resp = requests.post(f"{BASE_URL}/vendas", json=nova_venda)
 
-        if resp.status_code == 201:
-            console.print(f"[green]Venda registrada para o produto: {produto['nome']}[/green]")
+        resp_put = requests.put(
+            f"{BASE_URL}/produtos/{produto_id}",
+            json=produto_atualizado
+        )
+
+        if resp_put.status_code != 200:
+            console.print("[red]Erro ao atualizar estoque![/red]")
+            input("ENTER...")
+            return
+
+
+        nova_venda = {
+            "produtoId": produto_id,   
+            "quantidade": quantidade
+        }
+
+        resp_venda = requests.post(f"{BASE_URL}/vendas", json=nova_venda)
+
+        if resp_venda.status_code == 201:
+            console.print(f"[green]Venda registrada! Novo estoque: {novo_estoque}[/green]")
         else:
             console.print("[red]Erro ao registrar venda![/red]")
 
     except Exception as e:
-        console.print(f"[bold red]Erro de conexão: {e}[/bold red]")
+        console.print(f"[bold red]Erro: {e}[/bold red]")
 
-    input("Pressione ENTER para continuar...")
+    input("ENTER para continuar...")
 
 
 
